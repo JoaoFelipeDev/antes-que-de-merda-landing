@@ -110,7 +110,7 @@ export default function HomePage() {
                 disabled={loading}
                 className="rounded-xl bg-zinc-100 px-5 py-3 font-semibold text-zinc-900 hover:bg-white disabled:opacity-60"
               >
-                {loading ? "Enviando..." : "Quero"}
+                {loading ? "Salvando seu futuro…" : "Salvar meu eu do futuro"}
               </button>
             </div>
 
