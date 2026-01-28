@@ -8,11 +8,25 @@ function isValidEmail(email: string) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const email = String(body?.email ?? "").trim().toLowerCase();
-    const price_intent = String(body?.price_intent ?? "unknown");
-    const source = String(body?.source ?? "landing");
+    const {
+      email: rawEmail,
+      price_intent = "unknown",
+      source = "landing",
+      created_at_source = "landing",
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      utm_term,
+      company,
+    } = body ?? {};
 
-    const hp = String(body?.company ?? "").trim();
+    const email = String(rawEmail ?? "").trim().toLowerCase();
+    const intentValue = String(price_intent ?? "unknown");
+    const sourceValue = String(source ?? "landing");
+    const createdAtSourceValue = String(created_at_source ?? "landing");
+
+    const hp = String(company ?? "").trim();
     if (hp) {
       return NextResponse.json({ ok: true });
     }
@@ -25,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     const allowed = new Set(["yes", "maybe", "no", "unknown"]);
-    const intent = allowed.has(price_intent) ? price_intent : "unknown";
+    const intent = allowed.has(intentValue) ? intentValue : "unknown";
 
     const user_agent = req.headers.get("user-agent") ?? undefined;
     const ip =
@@ -37,7 +51,13 @@ export async function POST(req: Request) {
       {
         email,
         price_intent: intent,
-        source,
+        source: sourceValue,
+        created_at_source: createdAtSourceValue,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_content,
+        utm_term,
         user_agent,
         ip,
       },
@@ -59,4 +79,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

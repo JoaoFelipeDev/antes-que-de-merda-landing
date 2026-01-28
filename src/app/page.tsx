@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getUTMs } from "@/lib/utm";
 
 export default function HomePage() {
   const router = useRouter();
@@ -21,6 +22,11 @@ export default function HomePage() {
     setLoading(true);
 
     try {
+      const utms = getUTMs();
+
+      localStorage.setItem("aqdm_email", email);
+      localStorage.setItem("aqdm_utms", JSON.stringify(utms));
+
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,6 +34,8 @@ export default function HomePage() {
           email,
           price_intent: "unknown",
           source,
+          created_at_source: "landing",
+          ...utms,
           company: "",
         }),
       });
