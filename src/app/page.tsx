@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getUTMs } from "@/lib/utm";
 
 export default function HomePage() {
   const variant =
@@ -49,6 +50,11 @@ export default function HomePage() {
     setLoading(true);
 
     try {
+      const utms = getUTMs();
+
+      localStorage.setItem("aqdm_email", email);
+      localStorage.setItem("aqdm_utms", JSON.stringify(utms));
+
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

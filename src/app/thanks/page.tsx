@@ -17,15 +17,20 @@ export default function ThanksPage() {
     setSent(null);
 
     try {
-      const pseudoEmail = `vote-${intent}-${Date.now()}@example.local`;
+      const email = localStorage.getItem("aqdm_email");
+      const utms = JSON.parse(localStorage.getItem("aqdm_utms") || "{}");
+
+      if (!email) throw new Error("Email não encontrado.");
 
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: pseudoEmail,
+          email,
           price_intent: intent,
           source,
+          created_at_source: "pricing_vote",
+          ...utms,
           company: "",
         }),
       });
@@ -96,4 +101,3 @@ export default function ThanksPage() {
     </main>
   );
 }
-
