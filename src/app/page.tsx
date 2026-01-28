@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import { getUTMs } from "@/lib/utm";
 
 export default function HomePage() {
+  const variant =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("v") ?? "1"
+      : "1";
+  const headline =
+    variant === "2"
+      ? "Esqueceu de novo? Vai custar caro."
+      : "Antes que dê merda.";
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,6 +43,7 @@ export default function HomePage() {
           price_intent: "unknown",
           source,
           created_at_source: "landing",
+          copy_variant: variant,
           ...utms,
           company: "",
         }),
@@ -59,9 +68,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
       <div className="mx-auto max-w-2xl px-6 py-16">
         <div className="mb-10">
-          <h1 className="text-5xl font-bold tracking-tight">
-            Antes que dê merda.
-          </h1>
+          <h1 className="text-5xl font-bold tracking-tight">{headline}</h1>
           <p className="mt-4 text-lg text-zinc-300">
             Um app pra te avisar{" "}
             <span className="font-semibold text-zinc-100">antes</span> de você
@@ -118,7 +125,7 @@ export default function HomePage() {
                 disabled={loading}
                 className="rounded-xl bg-zinc-100 px-5 py-3 font-semibold text-zinc-900 hover:bg-white disabled:opacity-60"
               >
-                {loading ? "Enviando..." : "Quero"}
+                {loading ? "Salvando seu futuro…" : "Salvar meu eu do futuro"}
               </button>
             </div>
 
