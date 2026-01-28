@@ -4,10 +4,38 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const variant =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("v") ?? "1"
+      : "1";
+  const headline =
+    variant === "2"
+      ? "Esqueceu de novo? Vai custar caro."
+      : "Antes que dê merda.";
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  const utms = useMemo(() => {
+    if (typeof window === "undefined") return {};
+    const url = new URL(window.location.href);
+    const utm_source = url.searchParams.get("utm_source") ?? undefined;
+    const utm_medium = url.searchParams.get("utm_medium") ?? undefined;
+    const utm_campaign = url.searchParams.get("utm_campaign") ?? undefined;
+    const utm_term = url.searchParams.get("utm_term") ?? undefined;
+    const utm_content = url.searchParams.get("utm_content") ?? undefined;
+
+    return Object.fromEntries(
+      Object.entries({
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content,
+      }).filter(([, value]) => value),
+    );
+  }, []);
 
   const source = useMemo(() => {
     if (typeof window === "undefined") return "landing";
@@ -28,6 +56,9 @@ export default function HomePage() {
           email,
           price_intent: "unknown",
           source,
+          created_at_source: "landing",
+          copy_variant: variant,
+          ...utms,
           company: "",
         }),
       });
@@ -51,9 +82,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
       <div className="mx-auto max-w-2xl px-6 py-16">
         <div className="mb-10">
-          <h1 className="text-5xl font-bold tracking-tight">
-            Antes que dê merda.
-          </h1>
+          <h1 className="text-5xl font-bold tracking-tight">{headline}</h1>
           <p className="mt-4 text-lg text-zinc-300">
             Um app pra te avisar{" "}
             <span className="font-semibold text-zinc-100">antes</span> de você
